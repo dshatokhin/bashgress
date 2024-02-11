@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bashgress
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: bashgress
+  template:
+    metadata:
+      labels:
+        app: bashgress
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      initContainers:
+      - name: init
+        image: bitnami/kubectl
+        command: ["/bin/sh", "-ec"]
+        args:
+        - |
+          touch /config/rds.json
+          touch /config/cds.json
+        volumeMounts:
+        - name: config
+          mountPath: /config
+      containers:
+      - name: controller
+        image: bitnami/kubectl
+        command: ["/bin/sh", "-ec"]
+        args:
+        - /scripts/bashgress.sh
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: files
+          mountPath: /scripts
+      - name: envoy
+        image: envoyproxy/envoy:v1.29.0
+        args:
+          - '-c /bootstrap/envoy.yaml'
+        ports:
+          - containerPort: 9901
+            name: admin
+          - containerPort: 8080
+            name: http
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: files
+          mountPath: /bootstrap
+      volumes:
+        - name: files
+          configMap:
+            defaultMode: 493
+            name: bashgress
+        - name: config
+          emptyDir: {}
+      serviceAccount: bashgress
