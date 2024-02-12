@@ -1,0 +1,147 @@
+import "@k8s/K8sResource.pkl"
+import "@k8s/api/apps/v1/Deployment.pkl"
+import "@k8s/api/core/v1/Service.pkl"
+import "@k8s/api/networking/v1/Ingress.pkl"
+
+class Site {
+  templateUrl: String
+  templateDir: String
+  ingressHost: String
+  ingressPath: String
+}
+
+sites: Mapping<String, Site>
+
+resources: Listing<K8sResource> = new {
+  for (_key, _value in sites) {
+    new Deployment {
+      metadata {
+        name = _key
+      }
+      spec {
+        selector {
+          matchLabels {
+            ["app"] = _key
+          }
+        }
+        template {
+          metadata {
+            labels {
+              ["app"] = _key
+            }
+          }
+          spec {
+            initContainers {
+              new {
+                name = "init"
+                image = "curlimages/curl"
+                command = new {
+                  "/bin/sh"
+                  "-ec"
+                }
+                args = new {
+                  """
+                  curl -L -o /tmp/site.zip \(_value.templateUrl)
+                  unzip /tmp/site.zip -d /tmp/
+                  cp -R /tmp/\(_value.templateDir)/* /usr/share/nginx/html
+                  """
+                }
+                volumeMounts {
+                  new {
+                    name = "site"
+                    mountPath = "/usr/share/nginx/html"
+                  }
+                }
+              }
+            }
+
+            containers {
+              new {
+                name = "nginx"
+                image = "nginx"
+                ports {
+                  new {
+                    containerPort = 80
+                  }
+                }
+                volumeMounts {
+                  new {
+                    name = "site"
+                    mountPath = "/usr/share/nginx/html"
+                  }
+                }
+              }
+            }
+
+            volumes {
+              new {
+                name = "site"
+                emptyDir = new {}
+              }
+            }
+          }
+        }
+      }
+    }
+
+    new Service {
+      metadata {
+        name = _key
+        labels {
+          ["app"] = _key
+        }
+      }
+      spec {
+        type = "ClusterIP"
+        ports {
+          new {
+            port = 80
+          }
+        }
+        selector {
+          ["app"] = _key
+        }
+      }
+    }
+
+    new Ingress {
+      metadata {
+        name = _key
+        labels {
+          ["app"] = _key
+        }
+      }
+      spec {
+        ingressClassName = "bashgress"
+        rules {
+          new {
+            host = _value.ingressHost
+            http {
+              paths {
+                new {
+                  backend {
+                    service {
+                      name = _key
+                      port {
+                        number = 80
+                      }
+                    }
+                  }
+                  path = _value.ingressPath
+                  pathType = "ImplementationSpecific"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+output {
+  value = resources
+  renderer = (K8sResource.output.renderer as YamlRenderer) {
+    isStream = true
+  }
+}

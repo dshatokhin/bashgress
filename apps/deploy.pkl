@@ -1,0 +1,17 @@
+amends "template.pkl"
+
+sites {
+  ["chocolux"] {
+    templateUrl = "https://www.free-css.com/assets/files/free-css-templates/download/page293/chocolux.zip"
+    templateDir = "chocolux-html"
+    ingressHost = "chocolux.online"
+    ingressPath = "/"
+  }
+
+  ["antique"] {
+    templateUrl = "https://www.free-css.com/assets/files/free-css-templates/download/page295/antique-cafe.zip"
+    templateDir = "2126_antique_cafe"
+    ingressHost = "antique.online"
+    ingressPath = "/"
+  }
+}
