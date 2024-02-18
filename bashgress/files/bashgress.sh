@@ -40,14 +40,13 @@ while true; do
           --arg PREFIX "$service_path" \
           --arg CLUSTER "${namespace}-${service_name}-${service_port}" \
           '. += [{
-          "name": "service",
-          "domains": [ $DOMAIN ],
-          "routes": [{
-            "match": { "prefix": $PREFIX },
-            "route": { "cluster": $CLUSTER }
-            }
-          ]
-        }]' <<<"$routes"
+            "name": "service",
+            "domains": [ $DOMAIN ],
+            "routes": [{
+              "match": { "prefix": $PREFIX },
+              "route": { "cluster": $CLUSTER }
+            }]
+          }]' <<<"$routes"
       )
 
       clusters=$(
@@ -56,25 +55,25 @@ while true; do
           --arg ADDRESS "$service_name" \
           --arg PORT "$service_port" \
           '. += [{
-        "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
-        "name": $CLUSTER,
-        "type": "STRICT_DNS",
-        "load_assignment": {
-          "cluster_name": $CLUSTER,
-          "endpoints": [{
-            "lb_endpoints": [{
-              "endpoint": {
-                "address": {
-                  "socket_address": {
-                    "address": $ADDRESS,
-                    "port_value": $PORT | tonumber
+            "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
+            "name": $CLUSTER,
+            "type": "STRICT_DNS",
+            "load_assignment": {
+              "cluster_name": $CLUSTER,
+              "endpoints": [{
+                "lb_endpoints": [{
+                  "endpoint": {
+                    "address": {
+                      "socket_address": {
+                        "address": $ADDRESS,
+                        "port_value": $PORT | tonumber
+                      }
+                    }
                   }
-                }
-              }
-            }]
-          }]
-        }
-      }]' <<<"$clusters"
+                }]
+              }]
+            }
+          }]' <<<"$clusters"
       )
     fi
   done <<<"$ingress_objects"
