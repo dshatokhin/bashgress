@@ -12,11 +12,17 @@ class Site {
 
 sites: Mapping<String, Site>
 
+namespace: String
+
 resources: Listing<K8sResource> = new {
   for (_key, _value in sites) {
     new Deployment {
       metadata {
         name = _key
+        namespace = module.namespace
+        labels {
+          ["app"] = _key
+        }
       }
       spec {
         selector {
@@ -54,7 +60,6 @@ resources: Listing<K8sResource> = new {
                 }
               }
             }
-
             containers {
               new {
                 name = "nginx"
@@ -72,7 +77,6 @@ resources: Listing<K8sResource> = new {
                 }
               }
             }
-
             volumes {
               new {
                 name = "site"
@@ -87,6 +91,7 @@ resources: Listing<K8sResource> = new {
     new Service {
       metadata {
         name = _key
+        namespace = module.namespace
         labels {
           ["app"] = _key
         }
@@ -107,6 +112,7 @@ resources: Listing<K8sResource> = new {
     new Ingress {
       metadata {
         name = _key
+        namespace = module.namespace
         labels {
           ["app"] = _key
         }

@@ -1,5 +1,7 @@
 amends "template.pkl"
 
+namespace = "bashgress-system"
+
 sites {
   ["chocolux"] {
     templateUrl = "https://www.free-css.com/assets/files/free-css-templates/download/page293/chocolux.zip"
