@@ -44,4 +44,5 @@ http://chocolux.online
 
 ```shell
 > terraform -chdir=azure destroy -auto-approve
+Destroy complete! Resources: 2 destroyed.
 ```
