@@ -1,0 +1,6 @@
+azure/secrets.auto.tfvars
+.terraform/
+.terraform.lock.hcl
+*.tfstate*
+*my-cluster.yaml*
+
