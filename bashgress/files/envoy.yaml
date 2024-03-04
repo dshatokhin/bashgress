@@ -2,6 +2,11 @@ node:
   id: id_0
   cluster: bashgress
 
+default_regex_engine:
+  name: envoy.regex_engines.google_re2
+  typed_config:
+    '@type': type.googleapis.com/envoy.extensions.regex_engines.v3.GoogleRE2
+
 admin:
   address:
     socket_address:
@@ -21,8 +26,8 @@ static_resources:
       - name: envoy.filters.network.http_connection_manager
         typed_config:
           "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-          scheme_header_transformation:
-            scheme_to_overwrite: https
+          # scheme_header_transformation:
+          #   scheme_to_overwrite: https
           stat_prefix: ingress_http
 
           rds:
@@ -34,11 +39,16 @@ static_resources:
                   path: /config
             route_config_name: ingress_http
 
+          http_filters:
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
           access_log:
-            - name: envoy.access_loggers.file
-              typed_config:
-                '@type': type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
-                path: /dev/stdout
+          - name: envoy.access_loggers.file
+            typed_config:
+              '@type': type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
+              path: /dev/stdout
 
 dynamic_resources:
   cds_config:

@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bashgress
-  namespace: default
 spec:
   selector:
     matchLabels:
@@ -39,7 +38,7 @@ spec:
         - name: files
           mountPath: /scripts
       - name: envoy
-        image: envoyproxy/envoy:v1.29.0
+        image: envoyproxy/envoy:v1.29.1
         args:
           - '-c /bootstrap/envoy.yaml'
         ports:

@@ -1,6 +1,7 @@
-namespace: default
+namespace: bashgress-system
 
 resources:
+- namespace.yaml
 - deployment.yaml
 - rbac.yaml
 - service.yaml
