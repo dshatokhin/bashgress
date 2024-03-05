@@ -6,6 +6,7 @@ import "@k8s/api/networking/v1/Ingress.pkl"
 class Site {
   templateUrl: String
   templateDir: String
+  ingressClass: String
   ingressHost: String
   ingressPath: String
 }
@@ -118,7 +119,7 @@ resources: Listing<K8sResource> = new {
         }
       }
       spec {
-        ingressClassName = "bashgress"
+        ingressClassName = _value.ingressClass
         rules {
           new {
             host = _value.ingressHost
