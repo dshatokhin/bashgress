@@ -6,7 +6,7 @@ sites {
   ["chocolux"] {
     templateUrl = "https://www.free-css.com/assets/files/free-css-templates/download/page293/chocolux.zip"
     templateDir = "chocolux-html"
-    ingressClass = "nginx"
+    ingressClass = "bashgress"
     ingressHost = "chocolux.online"
     ingressPath = "/"
   }
@@ -14,7 +14,7 @@ sites {
   ["antique"] {
     templateUrl = "https://www.free-css.com/assets/files/free-css-templates/download/page295/antique-cafe.zip"
     templateDir = "2126_antique_cafe"
-    ingressClass = "nginx"
+    ingressClass = "bashgress"
     ingressHost = "antique.online"
     ingressPath = "/"
   }
