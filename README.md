@@ -6,6 +6,12 @@ Requirements:
 - pkl
 - kubectl
 
+Slides could be opened with [maaslalani/slides](https://github.com/maaslalani/slides):
+
+```shell
+> slides slides.md
+```
+
 ```shell
 > terraform -chdir=azure apply -auto-approve
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
