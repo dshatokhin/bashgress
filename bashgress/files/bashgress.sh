@@ -2,7 +2,7 @@
 
 set -e
 
-config_path="/config"
+config_path=${BASHGRESS_CONFIG_PATH:="/config"}
 
 echo '{
   "resources":[]
@@ -52,7 +52,7 @@ while true; do
       clusters=$(
         jq \
           --arg CLUSTER "${namespace}-${service_name}-${service_port}" \
-          --arg ADDRESS "$service_name" \
+          --arg ADDRESS "${service_name}.${namespace}" \
           --arg PORT "$service_port" \
           '. += [{
             "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",

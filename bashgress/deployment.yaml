@@ -27,7 +27,7 @@ spec:
         - name: config
           mountPath: /config
       containers:
-      - name: controller
+      - name: control-plane
         image: bitnami/kubectl
         command: ["/bin/sh", "-ec"]
         args:
@@ -37,7 +37,7 @@ spec:
           mountPath: /config
         - name: files
           mountPath: /scripts
-      - name: envoy
+      - name: data-plane
         image: envoyproxy/envoy:v1.29.1
         args:
           - '-c /bootstrap/envoy.yaml'
